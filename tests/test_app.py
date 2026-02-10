@@ -1,4 +1,3 @@
-import pytest
 from fastapi.testclient import TestClient
 from src.app import app
 
@@ -36,3 +35,11 @@ def test_signup_and_unregister():
     # Unregister again should fail
     response = client.delete(f"/activities/{activity}/unregister?email={email}")
     assert response.status_code == 400
+
+
+def test_unregister_unknown_activity():
+    unknown_activity = "UnknownActivity"
+    email = "someone@mergington.edu"
+    response = client.delete(f"/activities/{unknown_activity}/unregister?email={email}")
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Activity not found"
